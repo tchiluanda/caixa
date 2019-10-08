@@ -8,6 +8,8 @@ Vamos elencar aqui alguns aspectos, ou componentes, importantes do projeto, sem 
 
 Vamos começar com um perfil das despesas do Ministério da Justiça (que já tem um excelente sistema de acompanhamento das despesas).
 
+Para chamar a atenção, vamos usar um diagrama de bolhas em D3 semelhante [ao do Jim Vallandingham](https://vallandingham.me/bubble_charts_with_d3v4.html).
+
 ### Tentar compatibilizar as informações orçamentárias (classificações como função, subfunção, ação, grupo de despesa, indicadores orçamentários etc.) com as informações financeiras (vinculação de pagamento, essencialmente). 
 
 Como fazer isso diretamente a partir do Siafi?
