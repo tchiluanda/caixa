@@ -1,0 +1,70 @@
+* {
+    box-sizing: border-box;
+}
+
+header#abertura {
+    width: 100%;
+    background-color: #2c90bf;
+    padding: 20px;
+}
+
+header img.logo-tt {
+    /*position: absolute;*/
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    /*left: 0;
+    right: 0;
+    top: 20px;*/
+}
+
+section#vis {
+    max-width: 680px;
+    margin: 0 auto;
+    font-family: 'PT Serif', serif;
+    color: #333;
+}
+
+section#vis h1 {
+    /*color: #2c90bf;*/
+    text-align: center;
+}
+
+.nav-stepper {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    border-bottom: 1px solid #333;
+    justify-content: space-evenly;
+}
+
+.nav-stepper ul {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+}
+
+.nav-stepper li {
+    margin: 0 10px 0 0;
+    list-style: none;
+    font-size: 0.9em;
+    padding: 0.4em 0.3em;
+}
+
+.nav-stepper ul.controle > li {
+    background-color: white;
+    color: marron;
+}
+
+.nav-stepper ul.controle > li:hover {
+    background-color: #2c90bf;
+    color: white;
+}
+
+.comentarios {
+    background-color: aquamarine;
+}
+
+.grafico-d3-container {
+    background-color: antiquewhite;
+}
