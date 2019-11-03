@@ -24,3 +24,10 @@ Algumas ideias, a serem testadas:
 
 Semelhante ao que foi feito [aqui](https://github.com/TesouroNacional/puddles-puddles), só que melhor.
 
+## Inspirações
+
+NatGeo immigrations. Pode ser interessante fazer algo semelhante para visualizar o saldo diário das unidades.
+
+![](EAKTqhtXsAATAjG.jpg)
+
+https://twitter.com/aLucasLopez/status/1153646875427385344?s=20
