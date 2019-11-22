@@ -7,6 +7,20 @@ dados_brutos_LimSq %>%
   group_by(ID_ANO_LANC, CO_ORGAO) %>%
   summarise(sum(as.numeric(as.character(SALDORITEMINFORMAO))))
 
+qde_vincs <- dados_brutos_LimSq %>%
+  group_by(ID_DOCUMENTO, ID_VINCULACAO_PAGAMENTO) %>%
+  summarise() %>%
+  ungroup() %>%
+  group_by(ID_DOCUMENTO) %>%
+  count() %>%
+  ungroup()
+
+qde_vincs%>%
+  mutate(tipo_doc = str_sub(ID_DOCUMENTO, 16, 17)) %>%
+  filter(n > 1,
+         tipo_doc == "OB")
+  
+
 # aqui deu ok!
 
 dados_brutos_LimSq %>%
@@ -49,6 +63,6 @@ dados_brutos_Obrig %>%
   summarise(valor = sum(as.numeric(as.character(SALDORITEMINFORMAO)))) %>%
   spread(ID_ANO_LANC, valor)
 
-
+str(dados_brutos_Obrig)
   
             
