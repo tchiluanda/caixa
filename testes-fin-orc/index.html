@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=Alegreya+Sans:300,300i,400,400i,500,500i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Alegreya:400,400i,500,500i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Code:300,400,500,600,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilos.css">
+    <title>Acompanhamento do Decreto</title>
+</head>
+<body>
+    <header class="logo">
+        <img class="logo-tt" src="tt-logo-int.png" alt="logo do Tesouro Nacional Transparente">
+    </header>
+    <main>
+        <header id="abertura">
+            <h1>Acompanhamento do Decreto de Programação Financeira</h1>
+            <p>Com base em dados do Siafi</p>
+        </header>
+
+        <section class="quadro">
+            <div class="mini-header limited-width">
+                <p>Escolha o órgão e o mês</p>
+                <div class="selecao-entidades">
+                    <select name="menu-classificador" id="menu-classificador">
+                        <option value="">--Escolha um órgão--</option>
+                    </select>
+    
+                    <select name="menu-entidade" id="menu-entidade">
+                        <option value="">--Escolha um mês--</option>
+                    </select>
+                </div>
+            </div>
+            <p class="container-titulo-card"><span class="titulo-card"></span></p>
+            <div class="card opaque">
+                <table>
+                    <tbody>
+                        <tr class="space-under destaque">
+                            <th scope="row">Operações Garantidas</td>
+                            <td id="total_total"></td>
+                        </tr>
+                        <tr class="border-under">
+                            <th scope="row">INTERNA</td>
+                            <td id="interna_total"></td>
+                        </tr>  
+                        <tr>
+                            <th class="indent" scope="row">Internas Cambiais</td>
+                            <td id="interna_cambial"></td>
+                        </tr>  
+                        <tr class="space-under">
+                            <th class="indent" scope="row">Internas Demais</td>
+                            <td id="interna_demais"></td>
+                        </tr>
+                        <tr class="border-under">
+                            <th scope="row">EXTERNA</td>
+                            <td id="externa_total"></td>
+                        </tr>  
+                        <tr class="space-above destaque">
+                            <th scope="row">ATM</td>
+                            <td id="ATM_Total"></td>
+                        </tr>  
+                        <tr class="space-above destaque">
+                            <th scope="row">Custo Médio</td>
+                            <td id="Custo_Total"></td>
+                        </tr>                                                                        
+                    </tbody>
+                </table>
+                <div class="area-grafico">
+                    <p>Distribuição dos vencimentos</p>
+                    <div class="container-svg-card">
+                        <svg class="card"></svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    
+</body>
+</html>
