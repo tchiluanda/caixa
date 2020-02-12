@@ -1,6 +1,6 @@
 // captura referencias a elementos da página
-const $grafico_container = d3.select('.container-svg');
-const $svg     = $grafico_container.select("svg");
+const $grafico_container = d3.select('#anexos');
+const $svgs     = $grafico_container.selectAll("svg");
 
 // margem geral
 const PAD = 40;
@@ -9,15 +9,18 @@ const PAD = 40;
 // and uses it as the svg width
 // -> learnt that with @codenberg
 const w = $grafico_container.node().offsetWidth;
-//console.log("Largura do container: ", w);
+console.log("Largura do container: ", w);
 
 // defines h and the number of itens in the rank
 //  based on the width
 
-const h = w < 510 ? 300 : 450;
+const h = 200;
+//const w_grafico = w < 400 ? w : 400;
+
+
 
 // configures svg dimensions
-$svg      
+$svgs      
   .attr('width', w)
   .attr('height', h);
 
@@ -70,27 +73,31 @@ d3.csv("orc_fin.csv").then(function(dados) {
 
     // desenhar o grafico
 
-    // maximos
-    const max_lim_pag = d3.max(dados, d => +d.lim_pag);
-    const max_pago_lim_sq = d3.max(dados, d => +d.pg_mes + +d.lim_sq_sd);
-    const max_pago_liq_pg = d3.max(dados, d => +d.pg_mes + +d.liq_a_pg_sd);
-
-    console.log("maximos", [max_lim_pag, max_pago_lim_sq, max_pago_liq_pg]);
-
-    const max_geral = d3.max([max_lim_pag, max_pago_lim_sq, max_pago_liq_pg]);
-
-    console.log(max_geral);
-
-    const scale_x = d3.scaleLinear()
-      .domain([0, max_geral])
-      .range([PAD, w-PAD]);
 
     const draw_mes = function(cod_orgao, mes, anexo) {
       const dados_filtrados = dados.filter(
         d => d.cod_orgao == cod_orgao & 
              d.mes == mes &
              d.Anexo == anexo);
+
       console.log(dados_filtrados);
+
+      // maximos
+      const max_lim_pag = d3.max(dados_filtrados, d => +d.lim_pag);
+      const max_pago_lim_sq = d3.max(dados_filtrados, d => +d.pg_mes + +d.lim_sq_sd);
+      const max_pago_liq_pg = d3.max(dados_filtrados, d => +d.pg_mes + +d.liq_a_pg_sd);
+
+      console.log("maximos", [max_lim_pag, max_pago_lim_sq, max_pago_liq_pg]);
+
+      const max_geral = d3.max([max_lim_pag, max_pago_lim_sq, max_pago_liq_pg]);
+
+      console.log(max_geral);
+
+      const scale_x = d3.scaleLinear()
+        .domain([0, max_geral])
+        .range([PAD, w_grafico-PAD]);
+
+
       const $rect1 = $svg.selectAll("rect.rect1").data(dados_filtrados);
       $rect1.enter().append("rect")
        .attr("x", PAD)
