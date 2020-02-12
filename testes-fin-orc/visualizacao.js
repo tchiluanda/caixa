@@ -5,7 +5,7 @@ const $svgs     = $grafico_container.selectAll("svg");
 // margem geral
 const PAD = {
   x: 20,
-  y: 40
+  y: 35
 }
 
 
@@ -75,7 +75,8 @@ d3.csv("orc_fin.csv").then(function(dados) {
       .property("value", d => d)
       .text(d => d);
 
-    // desenhar o grafico
+    //  funcao para desenhar o grafico
+    // *******************************
 
 
     const draw_mes = function(cod_orgao, mes, anexo) {
@@ -83,92 +84,14 @@ d3.csv("orc_fin.csv").then(function(dados) {
         d => d.cod_orgao == cod_orgao & 
              d.mes == mes &
              d.Anexo == anexo);
-      
-      const limite_nao_utilizado = +dados_filtrados[0].lim_pag - +dados_filtrados[0].pg_mes > 0 ?
-                                   +dados_filtrados[0].lim_pag - +dados_filtrados[0].pg_mes :
-                                   0;
 
-      console.log(dados_filtrados, limite_nao_utilizado);
-
-      // maximos
-      const max_lim_pag = d3.max(dados_filtrados, d => +d.lim_pag);
-      const max_pago_lim_sq = d3.max(dados_filtrados, d => +d.pg_mes + +d.lim_sq_sd);
-      const max_pago_liq_pg = d3.max(dados_filtrados, d => +d.pg_mes + +d.liq_a_pg_sd);
-
-      console.log("maximos", [max_lim_pag, max_pago_lim_sq, max_pago_liq_pg]);
-
-      const max_geral = d3.max([max_lim_pag, max_pago_lim_sq, max_pago_liq_pg]);
-
-      console.log(max_geral);
-
-      // escala
-
-      const scale_x = d3.scaleLinear()
-        .domain([0, max_geral])
-        .range([0, w-2*PAD.x]);
-
-      const heights = 15;
-
-      const parametros = [
-        { 
-          label: "Limite de pagamento",
-          valor: formataBR(+dados_filtrados[0].lim_pag),
-          x : PAD.x,
-          y : PAD.y,
-          width : scale_x(+dados_filtrados[0].lim_pag),
-          height : heights,
-          dashed : false
-        },
-        { 
-          label: "Valor pago",
-          valor: formataBR(+dados_filtrados[0].pg_mes),
-          x : PAD.x,
-          y : PAD.y * 2,
-          width : scale_x(+dados_filtrados[0].pg_mes),
-          height : heights,
-          dashed : false
-        },
-        { 
-          label: "Limite não utilizado",
-          valor: formataBR(limite_nao_utilizado),
-          x : PAD.x + scale_x(+dados_filtrados[0].pg_mes),
-          y : PAD.y * 2,
-          width : scale_x(limite_nao_utilizado),
-          height : heights,
-          dashed : true
-        },
-        { 
-          label: "Limite de saque",
-          valor: formataBR(+dados_filtrados[0].lim_sq_sd),
-          x : PAD.x + scale_x(+dados_filtrados[0].pg_mes),
-          y : PAD.y * 3,
-          width : scale_x(+dados_filtrados[0].lim_sq_sd),
-          height : heights,
-          dashed : false 
-        },
-        { 
-          label: "Obrigações a pagar",
-          valor: formataBR(+dados_filtrados[0].liq_a_pg_sd),
-          x : PAD.x + scale_x(+dados_filtrados[0].pg_mes),
-          y : PAD.y * 4,
-          width : scale_x(+dados_filtrados[0].liq_a_pg_sd),
-          height : heights,
-          dashed : false 
-        }
-      ];
-
-      console.log("Parâmetros: ", parametros);
-
-      console.log("Labels: ", parametros.map(d => d.label));
-
-
-      const scale_cor = d3.scaleOrdinal()
-        .domain(parametros.map(d => d.label))
-        .range(["goldenrod", "dodgerblue", "transparent", "seagreen", "crimson"]);
-
-      let svg_id;
+      //console.log("Tem dados?", dados_filtrados);
 
       // selecao do svg correto
+      // para generalizar a função de desenhar o gráfico, e 
+      // parametrizá-la conforme o anexo
+      let svg_id;
+
       switch (anexo) {
         case "Anexo II":
           svg_id = "anexo2"
@@ -180,39 +103,190 @@ d3.csv("orc_fin.csv").then(function(dados) {
           svg_id = "anexo4"
           break;
       }
-
-      console.log("." + svg_id + " svg")
+      //console.log("." + svg_id + " svg")
 
       const $svg = d3.select("." + svg_id + " svg");
       const $container = d3.select("." + svg_id + " .container-svg");
 
-      // transformar dados_filtrados num array, para fazer um join inteligente
+      $container.select("p.aviso").remove();
 
-      const $rects_update = $svg.selectAll("rect").data(parametros);
-      const $rects_enter = $rects_update.enter();
-      
-      $rects_enter
-        .append("rect")
-        .classed("dashed", d => d.dashed)
-        .attr("x", d => d.x)
-        .attr("y", d => d.y)
-        .attr("width", d => d.width)
-        .attr("height", d => d.height)
-        .attr("fill", d => scale_cor(d.label));
+      const desenha = function() {
 
-      const $labels_update = $container.selectAll("p.label").data(parametros);
-      const $labels_enter = $labels_update.enter();
-      
-      $labels_enter
-        .append("p")
-        .style("top", d => `${d.y - 28}px`)
-        .style("left", d => `${d.x}px`)
-        .classed("label", true)
-        .style("color", d => scale_cor(d.label))
-        .text(d => d.label + ": R$ " + d.valor);
+        const limite_nao_utilizado = +dados_filtrados[0].lim_pag - +dados_filtrados[0].pg_mes > 0 ?
+                                    +dados_filtrados[0].lim_pag - +dados_filtrados[0].pg_mes :
+                                    0;
+
+        console.log(dados_filtrados, limite_nao_utilizado);
+
+        // maximos
+        const max_lim_pag = d3.max(dados_filtrados, d => +d.lim_pag);
+        const max_pago_lim_sq = d3.max(dados_filtrados, d => +d.pg_mes + +d.lim_sq_sd);
+        const max_pago_liq_pg = d3.max(dados_filtrados, d => +d.pg_mes + +d.liq_a_pg_sd);
+
+        console.log("maximos", [max_lim_pag, max_pago_lim_sq, max_pago_liq_pg]);
+
+        const max_geral = d3.max([max_lim_pag, max_pago_lim_sq, max_pago_liq_pg]);
+
+        console.log(max_geral);
+
+        // escala
+
+        const scale_x = d3.scaleLinear()
+          .domain([0, max_geral])
+          .range([0, w-2*PAD.x]);
+
+        const heights = 15;
+
+        const parametros = [
+          { 
+            label: "Limite de pagamento",
+            valor: formataBR(+dados_filtrados[0].lim_pag),
+            x : PAD.x,
+            y : PAD.y,
+            width : scale_x(+dados_filtrados[0].lim_pag),
+            height : heights,
+            dashed : false
+          },
+          { 
+            label: "Valor pago",
+            valor: formataBR(+dados_filtrados[0].pg_mes),
+            x : PAD.x,
+            y : PAD.y * 2,
+            width : scale_x(+dados_filtrados[0].pg_mes),
+            height : heights,
+            dashed : false
+          },
+          { 
+            label: "Limite não utilizado",
+            valor: formataBR(limite_nao_utilizado),
+            x : PAD.x + scale_x(+dados_filtrados[0].pg_mes),
+            y : PAD.y * 3,
+            width : scale_x(limite_nao_utilizado),
+            height : heights,
+            dashed : true
+          },
+          { 
+            label: "Limite de saque",
+            valor: formataBR(+dados_filtrados[0].lim_sq_sd),
+            x : PAD.x + scale_x(+dados_filtrados[0].pg_mes),
+            y : PAD.y * 4,
+            width : scale_x(+dados_filtrados[0].lim_sq_sd),
+            height : heights,
+            dashed : false 
+          },
+          { 
+            label: "Obrigações a pagar",
+            valor: formataBR(+dados_filtrados[0].liq_a_pg_sd),
+            x : PAD.x + scale_x(+dados_filtrados[0].pg_mes),
+            y : PAD.y * 5,
+            width : scale_x(+dados_filtrados[0].liq_a_pg_sd),
+            height : heights,
+            dashed : false 
+          }
+        ];
+
+        console.log("Parâmetros: ", parametros);
+
+        console.log("Labels: ", parametros.map(d => d.label));
+
+
+        const scale_cor = d3.scaleOrdinal()
+          .domain(parametros.map(d => d.label))
+          .range(["goldenrod", "dodgerblue", "transparent", "seagreen", "crimson"]);
+
+        const scale_cor_texto = d3.scaleOrdinal()
+          .domain(scale_cor.domain())
+          .range(["darkgoldenrod", "dodgerblue", "dimgrey", "seagreen", "firebrick"]);
+
+        // os rects
+
+        const $rects = $svg.selectAll("rect").data(parametros);
+        const $rects_enter = $rects
+          .enter()
+          .append("rect")
+          .attr("x", d => d.x)
+          .attr("y", d => d.y)
+          .attr("height", heights)
+          .attr("width", 0)
+          .attr("fill", "transparent");
+        
+        $rects.exit().remove()
+
+        const $rects_update = $rects.merge($rects_enter)
+          .classed("dashed", d => d.dashed)
+          .transition()
+          .duration(750)
+          .attr("x", d => d.x)
+          .attr("y", d => d.y)
+          .attr("width", d => d.width)
+          .attr("height", d => d.height)
+          .attr("fill", d => scale_cor(d.label));
+
+        
+
+        // os labels
+
+        const $labels = $container.selectAll("p.label").data(parametros);
+        const $labels_enter = $labels.enter().append("p");
+
+        $labels.exit().remove();
+        
+        const $labels_update = $labels.merge($labels_enter)
+          .style("top", d => `${d.y - 28}px`)
+          .classed("label", true)
+          .style("color", d => scale_cor_texto(d.label))
+          .text(d => d.label + ": R$ " + d.valor)
+          .transition()
+          .duration(750)
+          .style("left", d => `${d.x}px`); 
+      }  
+
+      // testar se existe dado para essa seleção
+      if (dados_filtrados.length == 0) {
+        // nesse caso não existe, então apaga os rects e labels,
+        // e exibe uma mensagem
+        $svg.selectAll("rect").remove()
+        $container.selectAll("p.label").remove()
+        $container.append("p")
+          .text("Sem dados para este Anexo neste orgão.")
+          .classed("aviso", true);
+      } else {
+        desenha();
+      }
+
     }
+      
 
-    draw_mes("20000", "2", "Anexo II")
+    // interatividade, desenhar o gráfico conforme a seleção
+    let orgao_selecionado, mes_selecionado;
+
+    $menu_orgao.on("change", function() {
+      const selecao = $menu_orgao.property("value");
+
+      orgao_selecionado = selecao.substring(0, 5)      
+
+      if (mes_selecionado) {
+        console.log("Mudei o orgao", orgao_selecionado, mes_selecionado);
+        draw_mes(orgao_selecionado, mes_selecionado, "Anexo II")
+        draw_mes(orgao_selecionado, mes_selecionado, "Anexo III")
+        draw_mes(orgao_selecionado, mes_selecionado, "Anexo IV")
+      }
+    })
+
+    $menu_mes.on("change", function() {
+      const selecao = $menu_mes.property("value");
+
+      mes_selecionado = "" + (meses.indexOf(selecao)+1);
+      console.log("mes", selecao, mes_selecionado);
+
+      if (orgao_selecionado) {
+        draw_mes(orgao_selecionado, mes_selecionado, "Anexo II")
+        draw_mes(orgao_selecionado, mes_selecionado, "Anexo III")
+        draw_mes(orgao_selecionado, mes_selecionado, "Anexo IV")
+      }      
+    })
+    
+    //draw_mes("20000", "2", "Anexo II")
 
     //console.log(lista_unica_orgaos);
 

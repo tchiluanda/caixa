@@ -79,7 +79,7 @@ dados <- orc_fin %>%
   left_join(lim_pag) %>%
   filter(!is.na(nome_orgao))
 
-write.csv(dados, file = "orc_fin.csv")
+write.csv(dados, file = "orc_fin.csv", fileEncoding = "UTF-8")
 
 # dados_org1 <- dados %>% filter(cod_orgao == "30000", mes == 4)
 

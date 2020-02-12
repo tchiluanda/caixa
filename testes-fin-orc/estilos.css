@@ -98,6 +98,14 @@ section.quadro div.container-svg {
     position: relative;
 }
 
+section.quadro div.container-svg p.aviso {
+    font-style: italic;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: crimson;
+}
+
 section.quadro div.container-svg svg rect.dashed {
     stroke-dasharray: 3 2;
     stroke: grey;
