@@ -93,25 +93,58 @@ d3.csv("orc_fin.csv").then(function(dados) {
 
       console.log(max_geral);
 
+      // escala
+
       const scale_x = d3.scaleLinear()
         .domain([0, max_geral])
-        .range([PAD, w_grafico-PAD]);
+        .range([0, w-2*PAD]);
 
+      console.log("escalado", scale_x(max_geral))
+
+      let svg_id;
+
+      // selecao do svg
+      switch (anexo) {
+        case "Anexo II":
+          svg_id = "anexo2"
+          break;
+        case "Anexo III":
+          svg_id = "anexo3"
+          break;
+        case "Anexo IV":
+          svg_id = "anexo4"
+          break;
+      }
+
+      console.log("." + svg_id + " svg")
+
+      const $svg = d3.select("." + svg_id + " svg");
+      const $container = d3.select("." + svg_id + " .container-svg");
+
+      // transformar dados_filtrados num array, para fazer um join inteligente
 
       const $rect1 = $svg.selectAll("rect.rect1").data(dados_filtrados);
       $rect1.enter().append("rect")
+       .classed("rect1", true)
        .attr("x", PAD)
        .attr("y", PAD)
-       .attr("width", function(d) {console.log("hi", +d.lim_pag); return(scale_x(+d.lim_pag))})
-       .attr("height", 10)
+       .attr("width", d => scale_x(+d.lim_pag))
+       .attr("height", 15)
        .attr("fill", "teal");
+
+      const $label1 = $container.selectAll("p.label1").data(dados_filtrados);
+      $label1.enter().append("p")
+        .style("top", `${PAD - 35}px`)
+        .style("left", PAD + "px")
+        .classed("label", true)
+        .text(d => "Limite de pagamento: " + formataBR(+d.lim_pag));
 
       const $rect2 = $svg.selectAll("rect.rect2").data(dados_filtrados);
        $rect2.enter().append("rect")
         .attr("x", PAD)
         .attr("y", PAD * 2)
         .attr("width", d => scale_x(+d.pg_mes))
-        .attr("height", 10)
+        .attr("height", 15)
         .attr("fill", "limegreen");   
         
       const $rect3 = $svg.selectAll("rect.rect3").data(dados_filtrados);
@@ -119,8 +152,16 @@ d3.csv("orc_fin.csv").then(function(dados) {
          .attr("x", d => PAD + scale_x(+d.pg_mes))
          .attr("y", PAD * 2)
          .attr("width", d => scale_x(+d.lim_sq_sd))
-         .attr("height", 10)
+         .attr("height", 15)
          .attr("fill", "firebrick");  
+
+      const $rect4 = $svg.selectAll("rect.rect3").data(dados_filtrados);
+         $rect4.enter().append("rect")
+          .attr("x", d => PAD + scale_x(+d.pg_mes))
+          .attr("y", PAD * 3)
+          .attr("width", d => scale_x(+d.liq_a_pg_sd))
+          .attr("height", 15)
+          .attr("fill", "firebrick"); 
     }
 
     draw_mes("20000", "2", "Anexo II")
