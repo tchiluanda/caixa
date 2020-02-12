@@ -3,7 +3,11 @@ const $grafico_container = d3.select('#anexos');
 const $svgs     = $grafico_container.selectAll("svg");
 
 // margem geral
-const PAD = 40;
+const PAD = {
+  x: 20,
+  y: 40
+}
+
 
 // captures the container's width
 // and uses it as the svg width
@@ -79,8 +83,12 @@ d3.csv("orc_fin.csv").then(function(dados) {
         d => d.cod_orgao == cod_orgao & 
              d.mes == mes &
              d.Anexo == anexo);
+      
+      const limite_nao_utilizado = +dados_filtrados[0].lim_pag - +dados_filtrados[0].pg_mes > 0 ?
+                                   +dados_filtrados[0].lim_pag - +dados_filtrados[0].pg_mes :
+                                   0;
 
-      console.log(dados_filtrados);
+      console.log(dados_filtrados, limite_nao_utilizado);
 
       // maximos
       const max_lim_pag = d3.max(dados_filtrados, d => +d.lim_pag);
@@ -97,13 +105,70 @@ d3.csv("orc_fin.csv").then(function(dados) {
 
       const scale_x = d3.scaleLinear()
         .domain([0, max_geral])
-        .range([0, w-2*PAD]);
+        .range([0, w-2*PAD.x]);
 
-      console.log("escalado", scale_x(max_geral))
+      const heights = 15;
+
+      const parametros = [
+        { 
+          label: "Limite de pagamento",
+          valor: formataBR(+dados_filtrados[0].lim_pag),
+          x : PAD.x,
+          y : PAD.y,
+          width : scale_x(+dados_filtrados[0].lim_pag),
+          height : heights,
+          dashed : false
+        },
+        { 
+          label: "Valor pago",
+          valor: formataBR(+dados_filtrados[0].pg_mes),
+          x : PAD.x,
+          y : PAD.y * 2,
+          width : scale_x(+dados_filtrados[0].pg_mes),
+          height : heights,
+          dashed : false
+        },
+        { 
+          label: "Limite não utilizado",
+          valor: formataBR(limite_nao_utilizado),
+          x : PAD.x + scale_x(+dados_filtrados[0].pg_mes),
+          y : PAD.y * 2,
+          width : scale_x(limite_nao_utilizado),
+          height : heights,
+          dashed : true
+        },
+        { 
+          label: "Limite de saque",
+          valor: formataBR(+dados_filtrados[0].lim_sq_sd),
+          x : PAD.x + scale_x(+dados_filtrados[0].pg_mes),
+          y : PAD.y * 3,
+          width : scale_x(+dados_filtrados[0].lim_sq_sd),
+          height : heights,
+          dashed : false 
+        },
+        { 
+          label: "Obrigações a pagar",
+          valor: formataBR(+dados_filtrados[0].liq_a_pg_sd),
+          x : PAD.x + scale_x(+dados_filtrados[0].pg_mes),
+          y : PAD.y * 4,
+          width : scale_x(+dados_filtrados[0].liq_a_pg_sd),
+          height : heights,
+          dashed : false 
+        }
+      ];
+
+      console.log("Parâmetros: ", parametros);
+
+      console.log("Labels: ", parametros.map(d => d.label));
+
+
+      const scale_cor = d3.scaleOrdinal()
+        .domain(parametros.map(d => d.label))
+        .range(["goldenrod", "dodgerblue", "transparent", "seagreen", "crimson"]);
 
       let svg_id;
 
-      // selecao do svg
+      // selecao do svg correto
       switch (anexo) {
         case "Anexo II":
           svg_id = "anexo2"
@@ -123,45 +188,28 @@ d3.csv("orc_fin.csv").then(function(dados) {
 
       // transformar dados_filtrados num array, para fazer um join inteligente
 
-      const $rect1 = $svg.selectAll("rect.rect1").data(dados_filtrados);
-      $rect1.enter().append("rect")
-       .classed("rect1", true)
-       .attr("x", PAD)
-       .attr("y", PAD)
-       .attr("width", d => scale_x(+d.lim_pag))
-       .attr("height", 15)
-       .attr("fill", "teal");
+      const $rects_update = $svg.selectAll("rect").data(parametros);
+      const $rects_enter = $rects_update.enter();
+      
+      $rects_enter
+        .append("rect")
+        .classed("dashed", d => d.dashed)
+        .attr("x", d => d.x)
+        .attr("y", d => d.y)
+        .attr("width", d => d.width)
+        .attr("height", d => d.height)
+        .attr("fill", d => scale_cor(d.label));
 
-      const $label1 = $container.selectAll("p.label1").data(dados_filtrados);
-      $label1.enter().append("p")
-        .style("top", `${PAD - 35}px`)
-        .style("left", PAD + "px")
+      const $labels_update = $container.selectAll("p.label").data(parametros);
+      const $labels_enter = $labels_update.enter();
+      
+      $labels_enter
+        .append("p")
+        .style("top", d => `${d.y - 28}px`)
+        .style("left", d => `${d.x}px`)
         .classed("label", true)
-        .text(d => "Limite de pagamento: " + formataBR(+d.lim_pag));
-
-      const $rect2 = $svg.selectAll("rect.rect2").data(dados_filtrados);
-       $rect2.enter().append("rect")
-        .attr("x", PAD)
-        .attr("y", PAD * 2)
-        .attr("width", d => scale_x(+d.pg_mes))
-        .attr("height", 15)
-        .attr("fill", "limegreen");   
-        
-      const $rect3 = $svg.selectAll("rect.rect3").data(dados_filtrados);
-        $rect3.enter().append("rect")
-         .attr("x", d => PAD + scale_x(+d.pg_mes))
-         .attr("y", PAD * 2)
-         .attr("width", d => scale_x(+d.lim_sq_sd))
-         .attr("height", 15)
-         .attr("fill", "firebrick");  
-
-      const $rect4 = $svg.selectAll("rect.rect3").data(dados_filtrados);
-         $rect4.enter().append("rect")
-          .attr("x", d => PAD + scale_x(+d.pg_mes))
-          .attr("y", PAD * 3)
-          .attr("width", d => scale_x(+d.liq_a_pg_sd))
-          .attr("height", 15)
-          .attr("fill", "firebrick"); 
+        .style("color", d => scale_cor(d.label))
+        .text(d => d.label + ": R$ " + d.valor);
     }
 
     draw_mes("20000", "2", "Anexo II")

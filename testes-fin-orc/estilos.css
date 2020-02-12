@@ -3,7 +3,6 @@
 }
 
 body {
-    margin: 0;
     background-color: whitesmoke; /* lightcyan */
     color: #444;
     /*font-size: 0.9rem;*/
@@ -31,7 +30,6 @@ header img.logo-tt {
 main {
     padding: 0 5px;
     font-family: 'Alegreya Sans', sans-serif;
-    margin-left: 1rem;
 }
 
 /* main header#abertura {
@@ -56,6 +54,11 @@ main header#abertura p {
     line-height: 1.5;
     max-width: 400px;
     margin-top: 0;
+}
+
+section.quadro {
+    max-width: 680px;
+    margin auto 0;
 }
 
 section.quadro div.selecao-entidades {
@@ -95,8 +98,15 @@ section.quadro div.container-svg {
     position: relative;
 }
 
+section.quadro div.container-svg svg rect.dashed {
+    stroke-dasharray: 3 2;
+    stroke: grey;
+    fill: transparent;
+}
+
 section.quadro div.container-svg p.label {
     position: absolute;
     text-align: right;
+    font-size: 12px;
 
 }
